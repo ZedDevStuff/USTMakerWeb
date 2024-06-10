@@ -1,3 +1,5 @@
+import JSON5 from 'json5';
+
 export class CustomUST {
     Name: string;
     Author: string;
@@ -72,8 +74,9 @@ export class CustomUST {
     static fromJson(json: string): CustomUST | null {
         let obj: any;
         try {
-            obj = JSON.parse(json);
+            obj = JSON5.parse(json);
         } catch (e) {
+            console.error(e);
             return null;
         }
         let ust = new CustomUST(obj.Name, obj.Author, obj.Description);
