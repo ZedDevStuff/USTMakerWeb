@@ -115,6 +115,7 @@
 					}
 					document.title = currentUST.Name + " by " + currentUST.Author + " - USTMakerWeb";
 					console.log("Loaded UST file", currentUST);
+                    workDir = picked;
 				} else {
 					alert("Failed to load UST file");
 				}
@@ -156,14 +157,16 @@
 	async function exportUst() {
 		let zip = new JSZip();
 		let ust = CustomUST.fromJson(JSON.stringify(currentUST, replacer, 2));
+        let root = workDir ? workDir.name : "";
 		let audioFolder = zip.folder("audio");
 		for(let level of ust!.levels) {
 			for(let entry of level[1]) {
 				let song = entry[1];
 				if(song) {
 					let found = soundBank.find((file) => file.name === song.split("/").pop());
+                    console.log("Found audio file for", song, "in", root, ":", found);
 					if(found) {
-						audioFolder!.file(found.name, found);
+						audioFolder!.file(song.replace("<soundBank>/", ""), found);
 					}
 				}
 			}
@@ -260,7 +263,7 @@
 	function updateEntryValue(level: string, entry: string, value: string) {
 		if(currentUST) {
 			currentUST.levels.get(level)?.set(entry, value);
-		}
+        }			
 	}
 
 	async function addAudioFile() {
